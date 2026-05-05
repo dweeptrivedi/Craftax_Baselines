@@ -156,6 +156,20 @@ def make_train(config):
         )
     env_params = env.default_params
 
+    # Optionally augment the env with an automaton fingerprint via
+    # ``automata_rl.embedding_setup.build_embedding_stack``. The augmented
+    # obs is a simple flat concat (UVFA-style); the augmented obs flows
+    # through ``ActorCriticRNN`` unchanged.
+    if config.get("EMBEDDING_KIND", "none") != "none":
+        if not config.get("TARGET_ACHIEVEMENT"):
+            raise ValueError(
+                "--embedding_kind requires --target_achievement; default Craftax "
+                "sum-of-achievements reward is not a single LTLf task and is unsupported.",
+            )
+        from automata_rl.embedding_setup import build_embedding_stack
+
+        env, _ = build_embedding_stack(env, config)
+
     # Wrap with some extra logging
     env = LogWrapper(env)
 
@@ -550,6 +564,34 @@ if __name__ == "__main__":
     parser.add_argument("--target_achievement", type=str, default=None,
                         help="If set, reward fires only on this Craftax achievement (lowercase name).")
     parser.add_argument("--task_terminate_on_complete", action="store_true")
+
+    # AUTOMATON EMBEDDING (provided by automata_rl subpackage)
+    parser.add_argument(
+        "--embedding_kind", choices=["none", "brzozowski_jax", "rad_lookup"],
+        default="none",
+        help="If != 'none', wrap env with AutomatonAugmentedEnvWrapper using this backend.",
+    )
+    parser.add_argument(
+        "--brzozowski_params_path", type=str,
+        default="outputs/brzozowski_jax_params.msgpack",
+    )
+    parser.add_argument(
+        "--brzozowski_config_path", type=str,
+        default="outputs/brzozowski_jax_config.yaml",
+    )
+    parser.add_argument(
+        "--brzozowski_eval_points_path", type=str,
+        default="outputs/brzozowski_jax_eval_points.npy",
+    )
+    parser.add_argument("--rad_lookup_path", type=str, default="outputs/lookup_rad.npz")
+    parser.add_argument(
+        "--task_predicates_path", type=str, default="outputs/task_predicates.json",
+    )
+    parser.add_argument(
+        "--reward_shaping",
+        choices=["none", "sparse_accept", "dense_accept_prob"], default="none",
+    )
+    parser.add_argument("--reward_shaping_scale", type=float, default=1.0)
 
     args, rest_args = parser.parse_known_args(sys.argv[1:])
     if rest_args:
