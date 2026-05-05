@@ -162,7 +162,7 @@ python ppo.py \
     --env_name Craftax-Symbolic-v1 \
     --target_achievement <task> --task_terminate_on_complete \
     --total_timesteps 200000000 --num_envs 1024 --seed <seed> \
-    --wandb_project craftx-baselines \
+    --wandb_project craftx-baselines --save_policy \
     $EMBED_FLAGS
 ```
 
@@ -173,7 +173,7 @@ python ppo_rnd.py \
     --env_name Craftax-Symbolic-v1 \
     --target_achievement <task> --task_terminate_on_complete \
     --total_timesteps 200000000 --num_envs 1024 --seed <seed> \
-    --wandb_project craftx-baselines \
+    --wandb_project craftx-baselines --save_policy \
     $EMBED_FLAGS
 ```
 
@@ -184,7 +184,7 @@ python ppo_rnn.py \
     --env_name Craftax-Symbolic-v1 \
     --target_achievement <task> --task_terminate_on_complete \
     --total_timesteps 200000000 --num_envs 1024 --seed <seed> \
-    --wandb_project craftx-baselines \
+    --wandb_project craftx-baselines --save_policy \
     $EMBED_FLAGS
 ```
 
