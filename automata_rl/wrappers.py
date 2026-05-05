@@ -311,7 +311,10 @@ class AutomatonAugmentedEnvWrapper(GymnaxWrapper):
         fp = jnp.where(done, init_fp, fp)
         accept = jnp.where(done, init_accept, accept)
 
-        info = {**info, "accept": accept}
+        # Emit under the ``embedding/`` namespace so the upstream
+        # ``logz.batch_logging.create_log_dict`` forwards it to W&B
+        # (mirrors the existing ``task/*`` namespace pattern).
+        info = {**info, "embedding/accept": accept}
         new_state = state.replace(env_state=env_state, q_state=next_q)
         aug_obs = self._concat(obs, fp, accept)
         return aug_obs, new_state, reward, done, info
@@ -371,7 +374,7 @@ def _make_shaping_fn(kind: str, scale: float) -> Callable[..., Float[Array, "...
 class AcceptRewardShapingWrapper(GymnaxWrapper):
     r"""Apply accept-based reward shaping on top of an :class:`AutomatonAugmentedEnvWrapper`.
 
-    Reads ``info["accept"]`` produced by the inner wrapper, carries
+    Reads ``info["embedding/accept"]`` produced by the inner wrapper, carries
     ``prev_accept`` per env in its own state pytree, and modifies the
     returned reward via the configured shaping function.
 
@@ -380,7 +383,7 @@ class AcceptRewardShapingWrapper(GymnaxWrapper):
     :class:`LogWrapper` records as the episode return.
 
     Args:
-        env: Inner env that emits ``info["accept"]`` (typically an
+        env: Inner env that emits ``info["embedding/accept"]`` (typically an
             :class:`AutomatonAugmentedEnvWrapper`).
         kind: One of ``"sparse_accept"``, ``"dense_accept_prob"``,
             or ``"none"`` (identity).
@@ -406,10 +409,11 @@ class AcceptRewardShapingWrapper(GymnaxWrapper):
         obs, inner_state, reward, done, info = self._env.step(
             key, state.env_state, action, params,
         )
-        accept = info["accept"]
+        accept = info["embedding/accept"]
         shaped = self._shaping_fn(reward, done, state.prev_accept, accept)
-        # ``AutomatonAugmentedEnvWrapper`` already overwrites ``info["accept"]``
-        # with the initial-state accept on ``done=True``, so a single
-        # ``next_prev = accept`` is correct for both branches.
+        # ``AutomatonAugmentedEnvWrapper`` already overwrites
+        # ``info["embedding/accept"]`` with the initial-state accept on
+        # ``done=True``, so a single ``next_prev = accept`` is correct for
+        # both branches.
         new_state = _ShapingState(env_state=inner_state, prev_accept=accept)
         return obs, new_state, shaped, done, info

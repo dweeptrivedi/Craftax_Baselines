@@ -114,7 +114,7 @@ def test_dense_shaping_with_rad_lookup_rejected(craftax_inner) -> None:
     reason="Brzozowski JAX artefacts not built.",
 )
 def test_shaping_wrapper_chained(craftax_inner) -> None:
-    """When ``REWARD_SHAPING != none``, the returned env should advertise ``info["accept"]``."""
+    """When ``REWARD_SHAPING != none``, the returned env should advertise ``info["embedding/accept"]``."""
     import jax
     import jax.numpy as jnp
 
@@ -128,7 +128,7 @@ def test_shaping_wrapper_chained(craftax_inner) -> None:
     params = env.default_params
     obs, state = env.reset(key, params)
     obs2, state2, reward, done, info = env.step(key, state, jnp.int32(0), params)
-    assert "accept" in info
+    assert "embedding/accept" in info
     # Shaping wrapper carries prev_accept on its own state field.
     assert hasattr(state2, "prev_accept")
 

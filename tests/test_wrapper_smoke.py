@@ -3,7 +3,7 @@
 Bypasses the need for a real checkpoint or RAD ``.npz`` files: we build a
 tiny ``RadLookupBackend`` from synthetic arrays, wrap a real Craftax env,
 and verify that reset/step trace under jit, that the augmented obs has
-the expected shape, that ``info["accept"]`` flows through, and that the
+the expected shape, that ``info["embedding/accept"]`` flows through, and that the
 predicate evaluator + reward-shaping primitives compose with the wrapper
 inside a vmap'd context.
 """
@@ -101,8 +101,8 @@ def test_reset_and_step_traces_under_jit(synthetic_env_stack) -> None:
 
     obs2, state2, reward, done, info = step_fn(key, state, jnp.int32(0))
     assert obs2.shape == obs.shape
-    assert "accept" in info
-    assert info["accept"].shape == ()
+    assert "embedding/accept" in info
+    assert info["embedding/accept"].shape == ()
     assert isinstance(state2.q_state.item(), int)
 
 
@@ -119,7 +119,7 @@ def test_vmap_over_envs(synthetic_env_stack) -> None:
         lambda k, s, a: env.step(k, s, a, params),
     )(keys, state_batch, actions)
     assert out_obs.shape[0] == 4
-    assert info["accept"].shape == (4,)
+    assert info["embedding/accept"].shape == (4,)
 
 
 def test_residual_advances_on_predicate_change(synthetic_env_stack) -> None:
@@ -140,7 +140,7 @@ def test_residual_advances_on_predicate_change(synthetic_env_stack) -> None:
     )
     # transition[0, 0] = 0  (no predicates active -> stay at initial)
     assert int(state2.q_state) == 0
-    assert float(info["accept"]) == 0.0
+    assert float(info["embedding/accept"]) == 0.0
 
 
 def test_reward_shaping_with_done_mask() -> None:

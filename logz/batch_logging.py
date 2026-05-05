@@ -23,7 +23,7 @@ def create_log_dict(info, config):
     to_log["achievements"] = sum_achievements
 
     for k, v in info.items():
-        if k.startswith("task/"):
+        if k.startswith("task/") or k.startswith("embedding/"):
             to_log[k] = v
 
     if config.get("TRAIN_ICM") or config.get("USE_RND"):

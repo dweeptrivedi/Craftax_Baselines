@@ -7,7 +7,7 @@ steps, and checks:
 - ``prev_accept`` is carried correctly across steps.
 - ``done`` masks out the bonus.
 - ``dense_accept_prob`` honors the configured ``scale``.
-- Shape of returned ``info["accept"]`` and shaped reward.
+- Shape of returned ``info["embedding/accept"]`` and shaped reward.
 """
 
 from __future__ import annotations
@@ -77,7 +77,7 @@ def test_shaping_none_is_identity(stack) -> None:
 
 
 def test_sparse_accept_carries_prev_accept(stack) -> None:
-    """``prev_accept`` should equal the previous step's ``info["accept"]``."""
+    """``prev_accept`` should equal the previous step's ``info["embedding/accept"]``."""
     from automata_rl.wrappers import AcceptRewardShapingWrapper
 
     aug, params = stack
@@ -91,7 +91,7 @@ def test_sparse_accept_carries_prev_accept(stack) -> None:
     s = state
     for k in keys:
         obs, s, shaped, done, info = env.step(k, s, jnp.int32(0), params)
-        accepts.append(float(info["accept"]))
+        accepts.append(float(info["embedding/accept"]))
     # ``prev_accept`` carried into the LAST step's state should equal the
     # SECOND-to-last step's accept value (the new ``s.prev_accept`` is the
     # CURRENT step's accept, used for the next step).

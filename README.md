@@ -233,7 +233,7 @@ inner Craftax env  =  CraftaxSymbolicEnv  OR  CraftaxSymbolicTaskEnv (if --targe
    |
    v
 AutomatonAugmentedEnvWrapper           # concat fingerprint(+accept) into obs;
-   |                                   # emit info["accept"]
+   |                                   # emit info["embedding/accept"]
    v
 [optional] AcceptRewardShapingWrapper  # carry prev_accept; modify reward
    |                                   # (sparse_accept | dense_accept_prob)
@@ -269,7 +269,9 @@ returns reflect the shaped reward.
   throughput (the AFA forward pass runs once per env step). For the
   `set_transformer-d128` checkpoint with `NUM_ENVS=64`, expect
   ~50-100 SPS.
-- **`info["accept"]` is not auto-forwarded to W&B.** Smokes use
-  `--no-use_wandb`; if you want it logged for real runs, add a one-line
-  forwarder in `logz/batch_logging.py` (mirror the `task/*` namespace
-  pattern that's already there).
+- **W&B logging of the AFA acceptance signal.**
+  `AutomatonAugmentedEnvWrapper` emits the per-step accept value as
+  `info["embedding/accept"]`, and `logz/batch_logging.create_log_dict`
+  forwards every key under the `embedding/` namespace to W&B (mirrors
+  the existing `task/*` pattern). Charts appear as `embedding/accept`
+  in the W&B UI when `--use_wandb` is on.
