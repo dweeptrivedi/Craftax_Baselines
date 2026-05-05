@@ -134,80 +134,88 @@ only. The 67 standard Craftax tasks are all covered by the Brzozowski path.
 
 ## Example experiment commands
 
-These run from `third_party/craftax_baselines/` (so `task_env.py`,
-`wrappers.py`, `logz/`, `models/`, `automata_rl/` resolve as siblings)
-and pass absolute paths into the parent repo's `outputs/`:
+Run from `third_party/craftax_baselines/` so `task_env.py`,
+`wrappers.py`, `logz/`, `models/`, `automata_rl/` resolve as siblings.
+Settings below match `scripts/run_sweep.sh` defaults
+(2e8 steps, 1024 envs, W&B on).  Substitute `$REPO`, `<task>`, and
+`<seed>` for your values; pick `<task>` from any entry in
+`outputs/task_predicates.json`.
 
 ```bash
-# Substitute REPO with your actual path:
-REPO=/path/to/automata-embeddings
+export REPO=/path/to/automata-embeddings
 cd "$REPO/third_party/craftax_baselines"
 
-# 1) Stock PPO baseline on a single-achievement task (no embedding).
-python ppo.py \
-    --env_name Craftax-Symbolic-v1 \
-    --target_achievement collect_wood --task_terminate_on_complete \
-    --embedding_kind none \
-    --total_timesteps 200000 --num_envs 64 --no-use_wandb
-
-# 2) Brzozowski-JAX-conditioned PPO.
-python ppo.py \
-    --env_name Craftax-Symbolic-v1 \
-    --target_achievement collect_wood --task_terminate_on_complete \
-    --embedding_kind brzozowski_jax \
-    --total_timesteps 200000 --num_envs 64 --no-use_wandb \
-    --task_predicates_path           "$REPO/outputs/task_predicates.json" \
-    --brzozowski_params_path         "$REPO/outputs/brzozowski_jax_params.msgpack" \
-    --brzozowski_config_path         "$REPO/outputs/brzozowski_jax_config.yaml" \
-    --brzozowski_eval_points_path    "$REPO/outputs/brzozowski_jax_eval_points.npy"
-
-# 3) Brzozowski-JAX + dense reward shaping.
-python ppo.py \
-    --env_name Craftax-Symbolic-v1 \
-    --target_achievement collect_wood --task_terminate_on_complete \
-    --embedding_kind brzozowski_jax \
-    --reward_shaping dense_accept_prob --reward_shaping_scale 0.1 \
-    --total_timesteps 200000 --num_envs 64 --no-use_wandb \
-    --task_predicates_path           "$REPO/outputs/task_predicates.json" \
-    --brzozowski_params_path         "$REPO/outputs/brzozowski_jax_params.msgpack" \
-    --brzozowski_config_path         "$REPO/outputs/brzozowski_jax_config.yaml" \
-    --brzozowski_eval_points_path    "$REPO/outputs/brzozowski_jax_eval_points.npy"
-
-# 4) RAD lookup (only if you have built the lookup with MONA).
-python ppo.py \
-    --env_name Craftax-Symbolic-v1 \
-    --target_achievement collect_wood --task_terminate_on_complete \
-    --embedding_kind rad_lookup \
-    --total_timesteps 200000 --num_envs 64 --no-use_wandb \
-    --task_predicates_path "$REPO/outputs/task_predicates.json" \
-    --rad_lookup_path      "$REPO/outputs/lookup_rad.npz"
-
-# 5) ppo_rnn.py with embedding.
-python ppo_rnn.py \
-    --env_name Craftax-Symbolic-v1 \
-    --target_achievement collect_wood --task_terminate_on_complete \
-    --embedding_kind brzozowski_jax \
-    --total_timesteps 200000 --num_envs 64 --no-use_wandb \
-    --task_predicates_path           "$REPO/outputs/task_predicates.json" \
-    --brzozowski_params_path         "$REPO/outputs/brzozowski_jax_params.msgpack" \
-    --brzozowski_config_path         "$REPO/outputs/brzozowski_jax_config.yaml" \
-    --brzozowski_eval_points_path    "$REPO/outputs/brzozowski_jax_eval_points.npy"
-
-# 6) ppo_rnd.py with embedding.
-python ppo_rnd.py \
-    --env_name Craftax-Symbolic-v1 \
-    --target_achievement collect_wood --task_terminate_on_complete \
-    --embedding_kind brzozowski_jax \
-    --total_timesteps 200000 --num_envs 64 --no-use_wandb \
-    --task_predicates_path           "$REPO/outputs/task_predicates.json" \
-    --brzozowski_params_path         "$REPO/outputs/brzozowski_jax_params.msgpack" \
-    --brzozowski_config_path         "$REPO/outputs/brzozowski_jax_config.yaml" \
-    --brzozowski_eval_points_path    "$REPO/outputs/brzozowski_jax_eval_points.npy"
+# Hoist the embedding flags into a shell variable so the same block
+# applies to all three runners (and so the no-embedding control is
+# just "drop $EMBED_FLAGS").
+EMBED_FLAGS="--embedding_kind brzozowski_jax \
+    --task_predicates_path        $REPO/outputs/task_predicates.json \
+    --brzozowski_params_path      $REPO/outputs/brzozowski_jax_params.msgpack \
+    --brzozowski_config_path      $REPO/outputs/brzozowski_jax_config.yaml \
+    --brzozowski_eval_points_path $REPO/outputs/brzozowski_jax_eval_points.npy"
 ```
 
-The first JIT-compile (per Python process) takes ~60-90 seconds before
-the first PPO update. Subsequent updates in the same process reuse the
-in-memory JAX cache.
+Vanilla PPO (`ppo.py`):
+
+```bash
+python ppo.py \
+    --env_name Craftax-Symbolic-v1 \
+    --target_achievement <task> --task_terminate_on_complete \
+    --total_timesteps 200000000 --num_envs 1024 --seed <seed> \
+    --wandb_project craftx-baselines \
+    $EMBED_FLAGS
+```
+
+PPO + RND (`ppo_rnd.py`):
+
+```bash
+python ppo_rnd.py \
+    --env_name Craftax-Symbolic-v1 \
+    --target_achievement <task> --task_terminate_on_complete \
+    --total_timesteps 200000000 --num_envs 1024 --seed <seed> \
+    --wandb_project craftx-baselines \
+    $EMBED_FLAGS
+```
+
+PPO + RNN (`ppo_rnn.py`):
+
+```bash
+python ppo_rnn.py \
+    --env_name Craftax-Symbolic-v1 \
+    --target_achievement <task> --task_terminate_on_complete \
+    --total_timesteps 200000000 --num_envs 1024 --seed <seed> \
+    --wandb_project craftx-baselines \
+    $EMBED_FLAGS
+```
+
+**Variants:**
+
+* **No-embedding baseline.** Drop `$EMBED_FLAGS` from any of the
+  three commands.
+* **RAD lookup** (only if `outputs/lookup_rad.npz` was built with
+  MONA). Replace `$EMBED_FLAGS` with:
+
+  ```bash
+  --embedding_kind rad_lookup \
+      --task_predicates_path $REPO/outputs/task_predicates.json \
+      --rad_lookup_path      $REPO/outputs/lookup_rad.npz
+  ```
+
+* **Reward shaping.** Append `--reward_shaping sparse_accept` (+1 on
+  the rising edge of acceptance) or
+  `--reward_shaping dense_accept_prob --reward_shaping_scale 0.1`
+  (Brzozowski-only).
+
+For a quick local smoke (~95 s on a single A6000), swap
+`--total_timesteps` to `5000`, `--num_envs` to `16`, and add
+`--no-use_wandb`. The first JIT-compile takes 60-90 s; subsequent
+updates in the same process reuse the in-memory JAX cache. Expect
+~50-100 SPS during real training (the AFA forward pass is the
+bottleneck).
+
+For full sweeps across multiple tasks/algos/seeds concurrently, see
+`scripts/run_sweep.sh` (currently doesn't thread the embedding flags
+-- one-line tweak documented in the parent repo's `TODO.md`).
 
 ## Tests
 
