@@ -22,6 +22,10 @@ def create_log_dict(info, config):
 
     to_log["achievements"] = sum_achievements
 
+    for k, v in info.items():
+        if k.startswith("task/"):
+            to_log[k] = v
+
     if config.get("TRAIN_ICM") or config.get("USE_RND"):
         to_log["intrinsic_reward"] = info["reward_i"]
         to_log["extrinsic_reward"] = info["reward_e"]

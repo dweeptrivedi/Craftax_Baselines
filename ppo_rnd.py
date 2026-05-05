@@ -8,6 +8,7 @@ import jax.numpy as jnp
 import numpy as np
 import optax
 from craftax.craftax_env import make_craftax_env_from_name
+from task_env import CraftaxSymbolicTaskEnv, CraftaxSymbolicTaskEnvNoAutoReset
 
 import wandb
 from typing import NamedTuple
@@ -55,9 +56,21 @@ def make_train(config):
         config["NUM_ENVS"] * config["NUM_STEPS"] // config["NUM_MINIBATCHES"]
     )
 
-    env = make_craftax_env_from_name(
-        config["ENV_NAME"], not config["USE_OPTIMISTIC_RESETS"]
-    )
+    if config.get("TARGET_ACHIEVEMENT"):
+        if "Symbolic" not in config["ENV_NAME"]:
+            raise ValueError(
+                "--target_achievement is only supported for Symbolic envs."
+            )
+        cls = (CraftaxSymbolicTaskEnv if not config["USE_OPTIMISTIC_RESETS"]
+               else CraftaxSymbolicTaskEnvNoAutoReset)
+        env = cls(
+            target_achievement=config["TARGET_ACHIEVEMENT"],
+            terminate_on_complete=config.get("TASK_TERMINATE_ON_COMPLETE", False),
+        )
+    else:
+        env = make_craftax_env_from_name(
+            config["ENV_NAME"], not config["USE_OPTIMISTIC_RESETS"]
+        )
     env_params = env.default_params
 
     env = LogWrapper(env)
@@ -670,6 +683,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "--rnd_is_episodic", action=argparse.BooleanOptionalAction, default=False
     )
+
+    # TASK
+    parser.add_argument("--target_achievement", type=str, default=None,
+                        help="If set, reward fires only on this Craftax achievement (lowercase name).")
+    parser.add_argument("--task_terminate_on_complete", action="store_true")
 
     args, rest_args = parser.parse_known_args(sys.argv[1:])
     if rest_args:
