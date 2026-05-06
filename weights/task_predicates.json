@@ -1,0 +1,1262 @@
+{
+  "cast_fireball": {
+    "sorted_predicates": [
+      "cast_fireball",
+      "enter_dungeon",
+      "enter_gnomish_mines",
+      "enter_sewers",
+      "learn_fireball"
+    ],
+    "predicate_indices": [
+      56,
+      29,
+      28,
+      30,
+      55
+    ],
+    "n_predicates": 5,
+    "task_idx": 0
+  },
+  "cast_iceball": {
+    "sorted_predicates": [
+      "cast_iceball",
+      "enter_dungeon",
+      "enter_gnomish_mines",
+      "enter_sewers",
+      "learn_iceball"
+    ],
+    "predicate_indices": [
+      58,
+      29,
+      28,
+      30,
+      57
+    ],
+    "n_predicates": 5,
+    "task_idx": 1
+  },
+  "collect_coal": {
+    "sorted_predicates": [
+      "collect_coal",
+      "collect_wood",
+      "make_wood_pickaxe",
+      "place_table"
+    ],
+    "predicate_indices": [
+      17,
+      0,
+      5,
+      1
+    ],
+    "n_predicates": 4,
+    "task_idx": 2
+  },
+  "collect_diamond": {
+    "sorted_predicates": [
+      "collect_coal",
+      "collect_diamond",
+      "collect_iron",
+      "collect_stone",
+      "collect_wood",
+      "make_iron_pickaxe",
+      "make_stone_pickaxe",
+      "make_wood_pickaxe",
+      "place_furnace",
+      "place_table"
+    ],
+    "predicate_indices": [
+      17,
+      19,
+      18,
+      9,
+      0,
+      20,
+      13,
+      5,
+      16,
+      1
+    ],
+    "n_predicates": 10,
+    "task_idx": 3
+  },
+  "collect_drink": {
+    "sorted_predicates": [
+      "collect_drink"
+    ],
+    "predicate_indices": [
+      4
+    ],
+    "n_predicates": 1,
+    "task_idx": 4
+  },
+  "collect_iron": {
+    "sorted_predicates": [
+      "collect_iron",
+      "collect_stone",
+      "collect_wood",
+      "make_stone_pickaxe",
+      "make_wood_pickaxe",
+      "place_table"
+    ],
+    "predicate_indices": [
+      18,
+      9,
+      0,
+      13,
+      5,
+      1
+    ],
+    "n_predicates": 6,
+    "task_idx": 5
+  },
+  "collect_ruby": {
+    "sorted_predicates": [
+      "collect_coal",
+      "collect_diamond",
+      "collect_iron",
+      "collect_ruby",
+      "collect_stone",
+      "collect_wood",
+      "make_diamond_pickaxe",
+      "make_iron_pickaxe",
+      "make_stone_pickaxe",
+      "make_wood_pickaxe",
+      "place_furnace",
+      "place_table"
+    ],
+    "predicate_indices": [
+      17,
+      19,
+      18,
+      59,
+      9,
+      0,
+      60,
+      20,
+      13,
+      5,
+      16,
+      1
+    ],
+    "n_predicates": 12,
+    "task_idx": 6
+  },
+  "collect_sapling": {
+    "sorted_predicates": [
+      "collect_sapling"
+    ],
+    "predicate_indices": [
+      3
+    ],
+    "n_predicates": 1,
+    "task_idx": 7
+  },
+  "collect_sapphire": {
+    "sorted_predicates": [
+      "collect_coal",
+      "collect_diamond",
+      "collect_iron",
+      "collect_sapphire",
+      "collect_stone",
+      "collect_wood",
+      "make_diamond_pickaxe",
+      "make_iron_pickaxe",
+      "make_stone_pickaxe",
+      "make_wood_pickaxe",
+      "place_furnace",
+      "place_table"
+    ],
+    "predicate_indices": [
+      17,
+      19,
+      18,
+      54,
+      9,
+      0,
+      60,
+      20,
+      13,
+      5,
+      16,
+      1
+    ],
+    "n_predicates": 12,
+    "task_idx": 8
+  },
+  "collect_stone": {
+    "sorted_predicates": [
+      "collect_stone",
+      "collect_wood",
+      "make_wood_pickaxe",
+      "place_table"
+    ],
+    "predicate_indices": [
+      9,
+      0,
+      5,
+      1
+    ],
+    "n_predicates": 4,
+    "task_idx": 9
+  },
+  "collect_wood": {
+    "sorted_predicates": [
+      "collect_wood"
+    ],
+    "predicate_indices": [
+      0
+    ],
+    "n_predicates": 1,
+    "task_idx": 10
+  },
+  "damage_necromancer": {
+    "sorted_predicates": [
+      "damage_necromancer",
+      "enter_dungeon",
+      "enter_fire_realm",
+      "enter_gnomish_mines",
+      "enter_graveyard",
+      "enter_ice_realm",
+      "enter_sewers",
+      "enter_troll_mines",
+      "enter_vault"
+    ],
+    "predicate_indices": [
+      48,
+      29,
+      33,
+      28,
+      35,
+      34,
+      30,
+      32,
+      31
+    ],
+    "n_predicates": 9,
+    "task_idx": 11
+  },
+  "defeat_archer": {
+    "sorted_predicates": [
+      "defeat_archer",
+      "enter_dungeon",
+      "enter_gnomish_mines",
+      "enter_sewers",
+      "enter_vault"
+    ],
+    "predicate_indices": [
+      66,
+      29,
+      28,
+      30,
+      31
+    ],
+    "n_predicates": 5,
+    "task_idx": 12
+  },
+  "defeat_deep_thing": {
+    "sorted_predicates": [
+      "defeat_deep_thing",
+      "enter_dungeon",
+      "enter_gnomish_mines",
+      "enter_sewers",
+      "enter_troll_mines",
+      "enter_vault"
+    ],
+    "predicate_indices": [
+      43,
+      29,
+      28,
+      30,
+      32,
+      31
+    ],
+    "n_predicates": 6,
+    "task_idx": 13
+  },
+  "defeat_fire_elemental": {
+    "sorted_predicates": [
+      "defeat_fire_elemental",
+      "enter_dungeon",
+      "enter_fire_realm",
+      "enter_gnomish_mines",
+      "enter_sewers",
+      "enter_troll_mines",
+      "enter_vault"
+    ],
+    "predicate_indices": [
+      45,
+      29,
+      33,
+      28,
+      30,
+      32,
+      31
+    ],
+    "n_predicates": 7,
+    "task_idx": 14
+  },
+  "defeat_frost_troll": {
+    "sorted_predicates": [
+      "defeat_frost_troll",
+      "enter_dungeon",
+      "enter_fire_realm",
+      "enter_gnomish_mines",
+      "enter_ice_realm",
+      "enter_sewers",
+      "enter_troll_mines",
+      "enter_vault"
+    ],
+    "predicate_indices": [
+      46,
+      29,
+      33,
+      28,
+      34,
+      30,
+      32,
+      31
+    ],
+    "n_predicates": 8,
+    "task_idx": 15
+  },
+  "defeat_gnome_archer": {
+    "sorted_predicates": [
+      "defeat_gnome_archer",
+      "enter_dungeon"
+    ],
+    "predicate_indices": [
+      37,
+      29
+    ],
+    "n_predicates": 2,
+    "task_idx": 16
+  },
+  "defeat_gnome_warrior": {
+    "sorted_predicates": [
+      "defeat_gnome_warrior",
+      "enter_dungeon"
+    ],
+    "predicate_indices": [
+      36,
+      29
+    ],
+    "n_predicates": 2,
+    "task_idx": 17
+  },
+  "defeat_ice_elemental": {
+    "sorted_predicates": [
+      "defeat_ice_elemental",
+      "enter_dungeon",
+      "enter_fire_realm",
+      "enter_gnomish_mines",
+      "enter_ice_realm",
+      "enter_sewers",
+      "enter_troll_mines",
+      "enter_vault"
+    ],
+    "predicate_indices": [
+      47,
+      29,
+      33,
+      28,
+      34,
+      30,
+      32,
+      31
+    ],
+    "n_predicates": 8,
+    "task_idx": 18
+  },
+  "defeat_knight": {
+    "sorted_predicates": [
+      "defeat_knight",
+      "enter_dungeon",
+      "enter_gnomish_mines",
+      "enter_sewers",
+      "enter_vault"
+    ],
+    "predicate_indices": [
+      65,
+      29,
+      28,
+      30,
+      31
+    ],
+    "n_predicates": 5,
+    "task_idx": 19
+  },
+  "defeat_kobold": {
+    "sorted_predicates": [
+      "defeat_kobold",
+      "enter_dungeon",
+      "enter_gnomish_mines",
+      "enter_sewers"
+    ],
+    "predicate_indices": [
+      41,
+      29,
+      28,
+      30
+    ],
+    "n_predicates": 4,
+    "task_idx": 20
+  },
+  "defeat_lizard": {
+    "sorted_predicates": [
+      "defeat_lizard",
+      "enter_dungeon",
+      "enter_gnomish_mines",
+      "enter_sewers"
+    ],
+    "predicate_indices": [
+      40,
+      29,
+      28,
+      30
+    ],
+    "n_predicates": 4,
+    "task_idx": 21
+  },
+  "defeat_necromancer": {
+    "sorted_predicates": [
+      "defeat_necromancer",
+      "enter_dungeon",
+      "enter_fire_realm",
+      "enter_gnomish_mines",
+      "enter_graveyard",
+      "enter_ice_realm",
+      "enter_sewers",
+      "enter_troll_mines",
+      "enter_vault"
+    ],
+    "predicate_indices": [
+      49,
+      29,
+      33,
+      28,
+      35,
+      34,
+      30,
+      32,
+      31
+    ],
+    "n_predicates": 9,
+    "task_idx": 22
+  },
+  "defeat_orc_mage": {
+    "sorted_predicates": [
+      "defeat_orc_mage",
+      "enter_dungeon",
+      "enter_gnomish_mines"
+    ],
+    "predicate_indices": [
+      39,
+      29,
+      28
+    ],
+    "n_predicates": 3,
+    "task_idx": 23
+  },
+  "defeat_orc_solider": {
+    "sorted_predicates": [
+      "defeat_orc_solider",
+      "enter_dungeon",
+      "enter_gnomish_mines"
+    ],
+    "predicate_indices": [
+      38,
+      29,
+      28
+    ],
+    "n_predicates": 3,
+    "task_idx": 24
+  },
+  "defeat_pigman": {
+    "sorted_predicates": [
+      "defeat_pigman",
+      "enter_dungeon",
+      "enter_fire_realm",
+      "enter_gnomish_mines",
+      "enter_sewers",
+      "enter_troll_mines",
+      "enter_vault"
+    ],
+    "predicate_indices": [
+      44,
+      29,
+      33,
+      28,
+      30,
+      32,
+      31
+    ],
+    "n_predicates": 7,
+    "task_idx": 25
+  },
+  "defeat_skeleton": {
+    "sorted_predicates": [
+      "defeat_skeleton"
+    ],
+    "predicate_indices": [
+      12
+    ],
+    "n_predicates": 1,
+    "task_idx": 26
+  },
+  "defeat_troll": {
+    "sorted_predicates": [
+      "defeat_troll",
+      "enter_dungeon",
+      "enter_gnomish_mines",
+      "enter_sewers",
+      "enter_troll_mines",
+      "enter_vault"
+    ],
+    "predicate_indices": [
+      42,
+      29,
+      28,
+      30,
+      32,
+      31
+    ],
+    "n_predicates": 6,
+    "task_idx": 27
+  },
+  "defeat_zombie": {
+    "sorted_predicates": [
+      "defeat_zombie"
+    ],
+    "predicate_indices": [
+      8
+    ],
+    "n_predicates": 1,
+    "task_idx": 28
+  },
+  "drink_potion": {
+    "sorted_predicates": [
+      "drink_potion",
+      "enter_dungeon",
+      "open_chest"
+    ],
+    "predicate_indices": [
+      62,
+      29,
+      61
+    ],
+    "n_predicates": 3,
+    "task_idx": 29
+  },
+  "eat_bat": {
+    "sorted_predicates": [
+      "eat_bat",
+      "enter_dungeon"
+    ],
+    "predicate_indices": [
+      50,
+      29
+    ],
+    "n_predicates": 2,
+    "task_idx": 30
+  },
+  "eat_cow": {
+    "sorted_predicates": [
+      "eat_cow"
+    ],
+    "predicate_indices": [
+      2
+    ],
+    "n_predicates": 1,
+    "task_idx": 31
+  },
+  "eat_plant": {
+    "sorted_predicates": [
+      "collect_sapling",
+      "eat_plant",
+      "place_plant"
+    ],
+    "predicate_indices": [
+      3,
+      11,
+      7
+    ],
+    "n_predicates": 3,
+    "task_idx": 32
+  },
+  "eat_snail": {
+    "sorted_predicates": [
+      "eat_snail",
+      "enter_dungeon",
+      "enter_gnomish_mines"
+    ],
+    "predicate_indices": [
+      51,
+      29,
+      28
+    ],
+    "n_predicates": 3,
+    "task_idx": 33
+  },
+  "enchant_armour": {
+    "sorted_predicates": [
+      "collect_coal",
+      "collect_diamond",
+      "collect_iron",
+      "collect_ruby",
+      "collect_sapphire",
+      "collect_stone",
+      "collect_wood",
+      "enchant_armour",
+      "enter_dungeon",
+      "make_diamond_armour",
+      "make_diamond_pickaxe",
+      "make_iron_armour",
+      "make_iron_pickaxe",
+      "make_stone_pickaxe",
+      "make_wood_pickaxe",
+      "place_furnace",
+      "place_table"
+    ],
+    "predicate_indices": [
+      17,
+      19,
+      18,
+      59,
+      54,
+      9,
+      0,
+      64,
+      29,
+      27,
+      60,
+      26,
+      20,
+      13,
+      5,
+      16,
+      1
+    ],
+    "n_predicates": 17,
+    "task_idx": 34
+  },
+  "enchant_sword": {
+    "sorted_predicates": [
+      "collect_coal",
+      "collect_diamond",
+      "collect_iron",
+      "collect_ruby",
+      "collect_sapphire",
+      "collect_stone",
+      "collect_wood",
+      "enchant_sword",
+      "enter_dungeon",
+      "make_diamond_pickaxe",
+      "make_diamond_sword",
+      "make_iron_pickaxe",
+      "make_iron_sword",
+      "make_stone_pickaxe",
+      "make_stone_sword",
+      "make_wood_pickaxe",
+      "make_wood_sword",
+      "place_furnace",
+      "place_table"
+    ],
+    "predicate_indices": [
+      17,
+      19,
+      18,
+      59,
+      54,
+      9,
+      0,
+      63,
+      29,
+      60,
+      25,
+      20,
+      21,
+      13,
+      14,
+      5,
+      6,
+      16,
+      1
+    ],
+    "n_predicates": 19,
+    "task_idx": 35
+  },
+  "enter_dungeon": {
+    "sorted_predicates": [
+      "enter_dungeon"
+    ],
+    "predicate_indices": [
+      29
+    ],
+    "n_predicates": 1,
+    "task_idx": 36
+  },
+  "enter_fire_realm": {
+    "sorted_predicates": [
+      "enter_dungeon",
+      "enter_fire_realm",
+      "enter_gnomish_mines",
+      "enter_sewers",
+      "enter_troll_mines",
+      "enter_vault"
+    ],
+    "predicate_indices": [
+      29,
+      33,
+      28,
+      30,
+      32,
+      31
+    ],
+    "n_predicates": 6,
+    "task_idx": 37
+  },
+  "enter_gnomish_mines": {
+    "sorted_predicates": [
+      "enter_dungeon",
+      "enter_gnomish_mines"
+    ],
+    "predicate_indices": [
+      29,
+      28
+    ],
+    "n_predicates": 2,
+    "task_idx": 38
+  },
+  "enter_graveyard": {
+    "sorted_predicates": [
+      "enter_dungeon",
+      "enter_fire_realm",
+      "enter_gnomish_mines",
+      "enter_graveyard",
+      "enter_ice_realm",
+      "enter_sewers",
+      "enter_troll_mines",
+      "enter_vault"
+    ],
+    "predicate_indices": [
+      29,
+      33,
+      28,
+      35,
+      34,
+      30,
+      32,
+      31
+    ],
+    "n_predicates": 8,
+    "task_idx": 39
+  },
+  "enter_ice_realm": {
+    "sorted_predicates": [
+      "enter_dungeon",
+      "enter_fire_realm",
+      "enter_gnomish_mines",
+      "enter_ice_realm",
+      "enter_sewers",
+      "enter_troll_mines",
+      "enter_vault"
+    ],
+    "predicate_indices": [
+      29,
+      33,
+      28,
+      34,
+      30,
+      32,
+      31
+    ],
+    "n_predicates": 7,
+    "task_idx": 40
+  },
+  "enter_sewers": {
+    "sorted_predicates": [
+      "enter_dungeon",
+      "enter_gnomish_mines",
+      "enter_sewers"
+    ],
+    "predicate_indices": [
+      29,
+      28,
+      30
+    ],
+    "n_predicates": 3,
+    "task_idx": 41
+  },
+  "enter_troll_mines": {
+    "sorted_predicates": [
+      "enter_dungeon",
+      "enter_gnomish_mines",
+      "enter_sewers",
+      "enter_troll_mines",
+      "enter_vault"
+    ],
+    "predicate_indices": [
+      29,
+      28,
+      30,
+      32,
+      31
+    ],
+    "n_predicates": 5,
+    "task_idx": 42
+  },
+  "enter_vault": {
+    "sorted_predicates": [
+      "enter_dungeon",
+      "enter_gnomish_mines",
+      "enter_sewers",
+      "enter_vault"
+    ],
+    "predicate_indices": [
+      29,
+      28,
+      30,
+      31
+    ],
+    "n_predicates": 4,
+    "task_idx": 43
+  },
+  "find_bow": {
+    "sorted_predicates": [
+      "enter_dungeon",
+      "find_bow"
+    ],
+    "predicate_indices": [
+      29,
+      52
+    ],
+    "n_predicates": 2,
+    "task_idx": 44
+  },
+  "fire_bow": {
+    "sorted_predicates": [
+      "collect_stone",
+      "collect_wood",
+      "enter_dungeon",
+      "find_bow",
+      "fire_bow",
+      "make_arrow",
+      "make_wood_pickaxe",
+      "place_table"
+    ],
+    "predicate_indices": [
+      9,
+      0,
+      29,
+      52,
+      53,
+      22,
+      5,
+      1
+    ],
+    "n_predicates": 8,
+    "task_idx": 45
+  },
+  "learn_fireball": {
+    "sorted_predicates": [
+      "enter_dungeon",
+      "enter_gnomish_mines",
+      "enter_sewers",
+      "learn_fireball"
+    ],
+    "predicate_indices": [
+      29,
+      28,
+      30,
+      55
+    ],
+    "n_predicates": 4,
+    "task_idx": 46
+  },
+  "learn_iceball": {
+    "sorted_predicates": [
+      "enter_dungeon",
+      "enter_gnomish_mines",
+      "enter_sewers",
+      "learn_iceball"
+    ],
+    "predicate_indices": [
+      29,
+      28,
+      30,
+      57
+    ],
+    "n_predicates": 4,
+    "task_idx": 47
+  },
+  "make_arrow": {
+    "sorted_predicates": [
+      "collect_stone",
+      "collect_wood",
+      "make_arrow",
+      "make_wood_pickaxe",
+      "place_table"
+    ],
+    "predicate_indices": [
+      9,
+      0,
+      22,
+      5,
+      1
+    ],
+    "n_predicates": 5,
+    "task_idx": 48
+  },
+  "make_diamond_armour": {
+    "sorted_predicates": [
+      "collect_coal",
+      "collect_diamond",
+      "collect_iron",
+      "collect_stone",
+      "collect_wood",
+      "make_diamond_armour",
+      "make_iron_pickaxe",
+      "make_stone_pickaxe",
+      "make_wood_pickaxe",
+      "place_furnace",
+      "place_table"
+    ],
+    "predicate_indices": [
+      17,
+      19,
+      18,
+      9,
+      0,
+      27,
+      20,
+      13,
+      5,
+      16,
+      1
+    ],
+    "n_predicates": 11,
+    "task_idx": 49
+  },
+  "make_diamond_pickaxe": {
+    "sorted_predicates": [
+      "collect_coal",
+      "collect_diamond",
+      "collect_iron",
+      "collect_stone",
+      "collect_wood",
+      "make_diamond_pickaxe",
+      "make_iron_pickaxe",
+      "make_stone_pickaxe",
+      "make_wood_pickaxe",
+      "place_furnace",
+      "place_table"
+    ],
+    "predicate_indices": [
+      17,
+      19,
+      18,
+      9,
+      0,
+      60,
+      20,
+      13,
+      5,
+      16,
+      1
+    ],
+    "n_predicates": 11,
+    "task_idx": 50
+  },
+  "make_diamond_sword": {
+    "sorted_predicates": [
+      "collect_coal",
+      "collect_diamond",
+      "collect_iron",
+      "collect_stone",
+      "collect_wood",
+      "make_diamond_sword",
+      "make_iron_pickaxe",
+      "make_stone_pickaxe",
+      "make_wood_pickaxe",
+      "place_furnace",
+      "place_table"
+    ],
+    "predicate_indices": [
+      17,
+      19,
+      18,
+      9,
+      0,
+      25,
+      20,
+      13,
+      5,
+      16,
+      1
+    ],
+    "n_predicates": 11,
+    "task_idx": 51
+  },
+  "make_iron_armour": {
+    "sorted_predicates": [
+      "collect_coal",
+      "collect_iron",
+      "collect_stone",
+      "collect_wood",
+      "make_iron_armour",
+      "make_stone_pickaxe",
+      "make_wood_pickaxe",
+      "place_furnace",
+      "place_table"
+    ],
+    "predicate_indices": [
+      17,
+      18,
+      9,
+      0,
+      26,
+      13,
+      5,
+      16,
+      1
+    ],
+    "n_predicates": 9,
+    "task_idx": 52
+  },
+  "make_iron_pickaxe": {
+    "sorted_predicates": [
+      "collect_coal",
+      "collect_iron",
+      "collect_stone",
+      "collect_wood",
+      "make_iron_pickaxe",
+      "make_stone_pickaxe",
+      "make_wood_pickaxe",
+      "place_furnace",
+      "place_table"
+    ],
+    "predicate_indices": [
+      17,
+      18,
+      9,
+      0,
+      20,
+      13,
+      5,
+      16,
+      1
+    ],
+    "n_predicates": 9,
+    "task_idx": 53
+  },
+  "make_iron_sword": {
+    "sorted_predicates": [
+      "collect_coal",
+      "collect_iron",
+      "collect_stone",
+      "collect_wood",
+      "make_iron_sword",
+      "make_stone_pickaxe",
+      "make_wood_pickaxe",
+      "place_furnace",
+      "place_table"
+    ],
+    "predicate_indices": [
+      17,
+      18,
+      9,
+      0,
+      21,
+      13,
+      5,
+      16,
+      1
+    ],
+    "n_predicates": 9,
+    "task_idx": 54
+  },
+  "make_stone_pickaxe": {
+    "sorted_predicates": [
+      "collect_stone",
+      "collect_wood",
+      "make_stone_pickaxe",
+      "make_wood_pickaxe",
+      "place_table"
+    ],
+    "predicate_indices": [
+      9,
+      0,
+      13,
+      5,
+      1
+    ],
+    "n_predicates": 5,
+    "task_idx": 55
+  },
+  "make_stone_sword": {
+    "sorted_predicates": [
+      "collect_stone",
+      "collect_wood",
+      "make_stone_sword",
+      "make_wood_pickaxe",
+      "place_table"
+    ],
+    "predicate_indices": [
+      9,
+      0,
+      14,
+      5,
+      1
+    ],
+    "n_predicates": 5,
+    "task_idx": 56
+  },
+  "make_torch": {
+    "sorted_predicates": [
+      "collect_coal",
+      "collect_wood",
+      "make_torch",
+      "make_wood_pickaxe",
+      "place_table"
+    ],
+    "predicate_indices": [
+      17,
+      0,
+      23,
+      5,
+      1
+    ],
+    "n_predicates": 5,
+    "task_idx": 57
+  },
+  "make_wood_pickaxe": {
+    "sorted_predicates": [
+      "collect_wood",
+      "make_wood_pickaxe",
+      "place_table"
+    ],
+    "predicate_indices": [
+      0,
+      5,
+      1
+    ],
+    "n_predicates": 3,
+    "task_idx": 58
+  },
+  "make_wood_sword": {
+    "sorted_predicates": [
+      "collect_wood",
+      "make_wood_sword",
+      "place_table"
+    ],
+    "predicate_indices": [
+      0,
+      6,
+      1
+    ],
+    "n_predicates": 3,
+    "task_idx": 59
+  },
+  "open_chest": {
+    "sorted_predicates": [
+      "enter_dungeon",
+      "open_chest"
+    ],
+    "predicate_indices": [
+      29,
+      61
+    ],
+    "n_predicates": 2,
+    "task_idx": 60
+  },
+  "place_furnace": {
+    "sorted_predicates": [
+      "collect_stone",
+      "collect_wood",
+      "make_wood_pickaxe",
+      "place_furnace",
+      "place_table"
+    ],
+    "predicate_indices": [
+      9,
+      0,
+      5,
+      16,
+      1
+    ],
+    "n_predicates": 5,
+    "task_idx": 61
+  },
+  "place_plant": {
+    "sorted_predicates": [
+      "collect_sapling",
+      "place_plant"
+    ],
+    "predicate_indices": [
+      3,
+      7
+    ],
+    "n_predicates": 2,
+    "task_idx": 62
+  },
+  "place_stone": {
+    "sorted_predicates": [
+      "collect_stone",
+      "collect_wood",
+      "make_wood_pickaxe",
+      "place_stone",
+      "place_table"
+    ],
+    "predicate_indices": [
+      9,
+      0,
+      5,
+      10,
+      1
+    ],
+    "n_predicates": 5,
+    "task_idx": 63
+  },
+  "place_table": {
+    "sorted_predicates": [
+      "collect_wood",
+      "place_table"
+    ],
+    "predicate_indices": [
+      0,
+      1
+    ],
+    "n_predicates": 2,
+    "task_idx": 64
+  },
+  "place_torch": {
+    "sorted_predicates": [
+      "collect_coal",
+      "collect_wood",
+      "make_torch",
+      "make_wood_pickaxe",
+      "place_table",
+      "place_torch"
+    ],
+    "predicate_indices": [
+      17,
+      0,
+      23,
+      5,
+      1,
+      24
+    ],
+    "n_predicates": 6,
+    "task_idx": 65
+  },
+  "wake_up": {
+    "sorted_predicates": [
+      "wake_up"
+    ],
+    "predicate_indices": [
+      15
+    ],
+    "n_predicates": 1,
+    "task_idx": 66
+  }
+}

@@ -30,7 +30,7 @@ jit: true
 num_repeats: 1
 target_achievement: null
 task_terminate_on_complete: false
-task_predicates_path: outputs/task_predicates.json
+task_predicates_path: weights/task_predicates.json
 
 # ``experiment_name`` is set only by ``experiment/*.yaml`` when an experiment
 # is selected; otherwise the key is absent and ``train.py`` reads it via
