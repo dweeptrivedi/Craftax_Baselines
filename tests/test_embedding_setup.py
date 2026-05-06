@@ -23,9 +23,9 @@ _CB_PATH = Path(__file__).resolve().parents[1]
 if str(_CB_PATH) not in sys.path:
     sys.path.insert(0, str(_CB_PATH))
 
-_BRZ_PARAMS = _REPO / "outputs" / "brzozowski_jax_params.msgpack"
-_BRZ_CONFIG = _REPO / "outputs" / "brzozowski_jax_config.yaml"
-_BRZ_EVAL_POINTS = _REPO / "outputs" / "brzozowski_jax_eval_points.npy"
+_BRZ_PARAMS = _CB_PATH / "weights" / "brzozowski" / "deepsets" / "params.msgpack"
+_BRZ_CONFIG = _CB_PATH / "weights" / "brzozowski" / "deepsets" / "config.yaml"
+_BRZ_EVAL_POINTS = _CB_PATH / "weights" / "brzozowski" / "deepsets" / "eval_points.npy"
 _TASK_PREDICATES = _REPO / "outputs" / "task_predicates.json"
 _RAD_LOOKUP = _REPO / "outputs" / "lookup_rad.npz"
 

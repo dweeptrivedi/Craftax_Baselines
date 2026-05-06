@@ -139,15 +139,18 @@ anywhere.
 # 1. Per-task predicate orderings + task_idx (committed, ~10 s)
 python scripts/derive_task_predicates.py
 
-# 2. Brzozowski-JAX backend (gitignored, ~30 s, requires the torch ckpt)
-#    The converter stays in the PARENT repo because it's about converting
+# 2. Brzozowski-JAX backend (committed under ``weights/brzozowski/<variant>/``;
+#    only re-run to refresh from a different checkpoint).
+#    Variants: ``deepsets`` (default for ``embedding=brzozowski``) and
+#    ``set_transformer`` (selected via ``embedding=brzozowski_st``).
+#    The converter lives in the PARENT repo because it's about converting
 #    a PyTorch Lightning checkpoint, not RL.
 .venv/bin/python ../../scripts/convert_brzozowski_to_jax.py \
     --checkpoint /path/to/last.ckpt \
     --hdf5 /path/to/dataset_v2.h5 \
-    --params-output      ../../outputs/brzozowski_jax_params.msgpack \
-    --eval-points-output ../../outputs/brzozowski_jax_eval_points.npy \
-    --config-output      ../../outputs/brzozowski_jax_config.yaml \
+    --params-output      weights/brzozowski/deepsets/params.msgpack \
+    --eval-points-output weights/brzozowski/deepsets/eval_points.npy \
+    --config-output      weights/brzozowski/deepsets/config.yaml \
     --device cpu
 
 # 3. RAD lookup table (gitignored, requires the MONA binary system-wide)

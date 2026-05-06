@@ -3,6 +3,6 @@ defaults:
   - override /reward: accept_continuous
 
 embedding_kind: brzozowski_jax
-brzozowski_params_path: outputs/brzozowski_jax_params.msgpack
-brzozowski_config_path: outputs/brzozowski_jax_config.yaml
-brzozowski_eval_points_path: outputs/brzozowski_jax_eval_points.npy
+brzozowski_params_path: weights/brzozowski/deepsets/params.msgpack
+brzozowski_config_path: weights/brzozowski/deepsets/config.yaml
+brzozowski_eval_points_path: weights/brzozowski/deepsets/eval_points.npy
