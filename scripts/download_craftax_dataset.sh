@@ -40,13 +40,17 @@ mkdir -p "$DATA_DIR"
 
 # Pick a downloader. The submodule has no venv of its own, so we resolve ``uv``
 # against the parent repo's venv (which is the active project venv for all
-# craftax_baselines work). Falls back to a system ``huggingface-cli``.
+# craftax_baselines work). ``huggingface_hub`` >=1.0 ships the CLI as ``hf``
+# (the legacy ``huggingface-cli`` was removed); fall back to either name on
+# the system PATH for older installs.
 if command -v uv >/dev/null 2>&1 && [ -d "$PARENT_REPO/.venv" ]; then
-  HF_CMD=(uv run --project "$PARENT_REPO" --with huggingface-hub huggingface-cli)
+  HF_CMD=(uv run --project "$PARENT_REPO" --with huggingface-hub hf)
+elif command -v hf >/dev/null 2>&1; then
+  HF_CMD=(hf)
 elif command -v huggingface-cli >/dev/null 2>&1; then
   HF_CMD=(huggingface-cli)
 else
-  echo "Error: neither 'uv' (with $PARENT_REPO/.venv) nor 'huggingface-cli' is available." >&2
+  echo "Error: neither 'uv' (with $PARENT_REPO/.venv) nor 'hf'/'huggingface-cli' is available." >&2
   echo "Install one of:" >&2
   echo "  - uv (https://docs.astral.sh/uv/) and run 'uv sync' in $PARENT_REPO, OR" >&2
   echo "  - pipx install huggingface-hub" >&2
