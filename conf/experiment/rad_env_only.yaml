@@ -1,0 +1,6 @@
+# @package _global_
+defaults:
+  - override /embedding: rad
+  - override /reward: env_only
+
+experiment_name: rad_env_only

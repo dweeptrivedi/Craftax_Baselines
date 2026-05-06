@@ -1,0 +1,23 @@
+# @package _global_
+variant_name: ppo
+run_target: ppo.run_ppo
+
+# Read by ppo.make_train (default 4); not read by ppo_rnn / ppo_rnd's
+# make_train. Lives here so `variant=ppo_rnn` rejects
+# `exploration_update_epochs=...` at compose time, matching today's
+# argparse strictness on a flag ppo_rnn.py never exposes.
+exploration_update_epochs: 4
+
+# ICM exploration
+train_icm: false
+icm_reward_coeff: 1.0
+icm_lr: 3.0e-4
+icm_forward_loss_coef: 1.0
+icm_inverse_loss_coef: 1.0
+icm_layer_size: 256
+icm_latent_size: 32
+
+# E3B exploration
+use_e3b: false
+e3b_reward_coeff: 1.0
+e3b_lambda: 0.1

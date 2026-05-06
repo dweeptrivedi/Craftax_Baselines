@@ -143,34 +143,40 @@ def test_residual_advances_on_predicate_change(synthetic_env_stack) -> None:
     assert float(info["embedding/accept"]) == 0.0
 
 
-def test_reward_shaping_with_done_mask() -> None:
-    """``sparse_accept`` and ``dense_accept_prob`` mask out done steps."""
+def test_term_fns_batched_no_done_mask() -> None:
+    """``sparse_accept`` and ``dense_accept_prob`` fire on done=True steps now.
+
+    Smoke check on the batched term-fn signature
+    ``(done, prev_accept, curr_accept) -> term``. Regression for the
+    removed ``& ~done`` / ``where(done, 0, ...)`` masks: under the old
+    behavior, the done-step entries below were zeroed.
+    """
     from automata_rl.reward_shaping import (
+        TERM_FNS,
         dense_accept_prob,
-        get_shaping_fn,
         sparse_accept,
     )
 
-    r = jnp.zeros(4)
     done = jnp.array([False, False, True, False])
     prev = jnp.array([0.0, 0.0, 0.5, 0.0])
-    curr = jnp.array([0.7, 0.0, 0.0, 0.0])  # rising, no-change, post-done, all-zero
-    shaped = sparse_accept(r, done, prev, curr)
-    assert float(shaped[0]) == 1.0  # rising edge
+    curr = jnp.array([0.7, 0.0, 0.6, 0.0])  # rising, no-change, rising-on-done, all-zero
+    shaped = sparse_accept(done, prev, curr)
+    assert float(shaped[0]) == 1.0
     assert float(shaped[1]) == 0.0
-    assert float(shaped[2]) == 0.0  # done masked
+    assert float(shaped[2]) == 1.0  # rising edge fires regardless of done
     assert float(shaped[3]) == 0.0
 
-    delta = dense_accept_prob(r, done, prev, curr, scale=2.0)
-    assert float(delta[0]) == pytest.approx(2.0 * 0.7)
+    delta = dense_accept_prob(done, prev, curr)
+    assert float(delta[0]) == pytest.approx(0.7)
     assert float(delta[1]) == 0.0
-    assert float(delta[2]) == 0.0  # done masked
+    assert float(delta[2]) == pytest.approx(0.1)  # delta fires regardless of done
     assert float(delta[3]) == 0.0
 
-    # Lookup
-    assert get_shaping_fn("none") is not get_shaping_fn("sparse_accept")
-    with pytest.raises(ValueError, match="Unknown reward_shaping"):
-        get_shaping_fn("nope")
+    # ``TERM_FNS`` lookup
+    assert "none" in TERM_FNS
+    assert "continuous_relu" in TERM_FNS
+    assert "sparse_accept" in TERM_FNS
+    assert TERM_FNS["none"] is not TERM_FNS["sparse_accept"]
 
 
 def test_predicate_evaluator_matches_predicates_to_mask() -> None:

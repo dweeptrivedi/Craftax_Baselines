@@ -11,8 +11,10 @@ Modules:
 
 - :mod:`.predicate_eval` -- env_state -> symbol bitmask
 - :mod:`.wrappers` -- ``AutomatonAugmentedEnvWrapper`` + backend abstractions
-  + ``AcceptRewardShapingWrapper``
-- :mod:`.reward_shaping` -- sparse/dense accept-based reward bonuses
+  + ``RewardCompositionWrapper``
+- :mod:`.reward_shaping` -- accept-derived term functions (``none``,
+  ``sparse_accept``, ``dense_accept_prob``, ``continuous``,
+  ``continuous_relu``)
 - :mod:`.embedding_setup` -- ``build_embedding_stack`` factory used by
   ``ppo.py`` / ``ppo_rnn.py`` / ``ppo_rnd.py``
 """

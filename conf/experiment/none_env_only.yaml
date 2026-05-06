@@ -1,0 +1,6 @@
+# @package _global_
+defaults:
+  - override /embedding: none
+  - override /reward: env_only
+
+experiment_name: none_env_only

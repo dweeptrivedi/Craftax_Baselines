@@ -1,9 +1,26 @@
-r"""Reward shaping based on automaton acceptance.
+r"""Term functions for the unified reward composition.
 
-Per the plan (:file:`AFA_INFER_CRAFTAX_BASELINE.md`, "Reward shaping"
-section): both shaping functions mask out ``done=True`` to prevent the
-phantom ``accept[initial] - accept[prev]`` artifact when the env
-auto-resets.
+Each function returns the *raw accept-derived term* (not a shaped
+reward) given ``(done, prev_accept, curr_accept)``. The
+:class:`automata_rl.wrappers.RewardCompositionWrapper` linearly
+combines this term with the inner env reward using user-supplied
+coefficients:
+
+.. math::
+
+    \text{reward} = \text{env\_coef} \cdot \text{env\_reward}
+                    + \text{accept\_coef} \cdot \text{term}(\text{done},
+                                                            \text{prev},
+                                                            \text{curr}).
+
+History note: the previous ``& ~done`` / ``where(done, 0, ...)`` masks
+on ``sparse_accept`` and ``dense_accept_prob`` were introduced to work
+around a since-fixed accept-reset bug in
+:class:`automata_rl.wrappers.AutomatonAugmentedEnvWrapper` (which used
+to overwrite the live accept with the initial-state accept on
+``done=True``). With ``info["embedding/accept"]`` now carrying the
+live ``pre_reset_accept`` on every step, the masks are removed: a
+successful ``done`` step *should* fire the rising-edge / delta reward.
 """
 
 from __future__ import annotations
@@ -14,66 +31,84 @@ import jax.numpy as jnp
 from jaxtyping import Array, Bool, Float
 
 
-RewardShapingFn = Callable[
-    [Float[Array, "B"], Bool[Array, "B"], Float[Array, "B"], Float[Array, "B"]],
+TermFn = Callable[
+    [Bool[Array, "B"], Float[Array, "B"], Float[Array, "B"]],
     Float[Array, "B"],
 ]
 
 
-def none_shaping(
-    reward: Float[Array, "B"],
+def none_term(
     done: Bool[Array, "B"],
     prev_accept: Float[Array, "B"],
     curr_accept: Float[Array, "B"],
 ) -> Float[Array, "B"]:
-    """Identity — no reward shaping. Default."""
-    return reward
+    """Disable the accept term."""
+    del done, prev_accept, curr_accept
+    return jnp.float32(0.0)
 
 
 def sparse_accept(
-    reward: Float[Array, "B"],
     done: Bool[Array, "B"],
     prev_accept: Float[Array, "B"],
     curr_accept: Float[Array, "B"],
 ) -> Float[Array, "B"]:
-    """+1 bonus on the FIRST step that arrives in an accepting residual.
+    """``1.0`` on the first step that arrives in an accepting residual.
 
-    Both backends populate ``accept`` in ``[0, 1]``; we threshold at 0.5.
+    Threshold at ``0.5`` (both backends populate ``accept`` in
+    ``[0, 1]``). Fires on the rising edge regardless of ``done``.
     """
+    del done
     rising_edge = (curr_accept > 0.5) & (prev_accept <= 0.5)
-    bonus = (rising_edge & ~done).astype(reward.dtype)
-    return reward + bonus
+    return rising_edge.astype(jnp.float32)
 
 
 def dense_accept_prob(
-    reward: Float[Array, "B"],
     done: Bool[Array, "B"],
     prev_accept: Float[Array, "B"],
     curr_accept: Float[Array, "B"],
-    scale: float = 1.0,
 ) -> Float[Array, "B"]:
-    """Differential of accept-probability. Brzozowski-only (continuous accept).
+    """Telescoping delta of accept probability.
 
-    For RAD the accept channel is binary 0/1; using this fn there reduces
-    to a flickering :math:`\\pm 1` shaping which is poorly conditioned.
-    The runner errors when ``embedding=rad_lookup`` is paired with
-    ``reward_shaping=dense_accept_prob``.
+    Cumulative reward over an episode equals
+    ``curr_accept_T - curr_accept_0 = curr_accept_T``, so the floor
+    cancels out by construction. Brzozowski-only — for RAD's binary
+    accept the delta would flicker, so the runner errors when
+    ``embedding=rad_lookup`` is paired with
+    ``accept_reward_kind=dense_accept_prob``.
     """
-    delta = curr_accept - prev_accept
-    return reward + scale * jnp.where(done, 0.0, delta)
+    del done
+    return curr_accept - prev_accept
 
 
-SHAPING_FNS: dict[str, RewardShapingFn] = {
-    "none": none_shaping,
+def continuous(
+    done: Bool[Array, "B"],
+    prev_accept: Float[Array, "B"],
+    curr_accept: Float[Array, "B"],
+) -> Float[Array, "B"]:
+    """Raw model belief: term equals the current accept score."""
+    del done, prev_accept
+    return curr_accept
+
+
+def continuous_relu(
+    done: Bool[Array, "B"],
+    prev_accept: Float[Array, "B"],
+    curr_accept: Float[Array, "B"],
+) -> Float[Array, "B"]:
+    """``curr_accept`` thresholded at ``0.1``; below threshold returns 0.
+
+    The hard threshold zeroes the per-step floor reward that an
+    imperfectly-calibrated model would otherwise emit in non-accepting
+    states.
+    """
+    del done, prev_accept
+    return jnp.where(curr_accept >= 0.1, curr_accept, jnp.float32(0.0))
+
+
+TERM_FNS: dict[str, TermFn] = {
+    "none": none_term,
     "sparse_accept": sparse_accept,
     "dense_accept_prob": dense_accept_prob,
+    "continuous": continuous,
+    "continuous_relu": continuous_relu,
 }
-
-
-def get_shaping_fn(name: str) -> RewardShapingFn:
-    """Look up a reward-shaping function by name (Hydra config-friendly)."""
-    if name not in SHAPING_FNS:
-        raise ValueError(
-            f"Unknown reward_shaping {name!r}; expected one of {list(SHAPING_FNS)}",
-        )
-    return SHAPING_FNS[name]

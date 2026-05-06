@@ -1,0 +1,5 @@
+# @package _global_
+use_wandb: true
+save_policy: true
+wandb_project: null
+wandb_entity: null

@@ -26,7 +26,6 @@ no-joint-training scope.
 
 from __future__ import annotations
 
-import functools
 import sys
 from functools import partial
 from pathlib import Path
@@ -300,6 +299,13 @@ class AutomatonAugmentedEnvWrapper(GymnaxWrapper):
         sym = self._predicate_eval(env_state)
         next_q, fp, accept = self._backend.step_automaton(state.q_state, sym)
 
+        # Snapshot the model's accept of the trajectory's actual final
+        # residual BEFORE the done-reset clobbers it. Without this, on
+        # ``done=True`` the post-reset overwrite below would replace it
+        # with the constant ``init_accept`` and the W&B-side mean (taken
+        # only over done rows) would collapse to that constant.
+        pre_reset_accept = accept
+
         # Reset to backend's initial on done. Use jax.tree.map so it
         # works for both pytree (Brzozowski) and scalar (RAD) q_state.
         init_q = self._backend.initial_q()
@@ -314,7 +320,7 @@ class AutomatonAugmentedEnvWrapper(GymnaxWrapper):
         # Emit under the ``embedding/`` namespace so the upstream
         # ``logz.batch_logging.create_log_dict`` forwards it to W&B
         # (mirrors the existing ``task/*`` namespace pattern).
-        info = {**info, "embedding/accept": accept}
+        info = {**info, "embedding/accept": pre_reset_accept}
         new_state = state.replace(env_state=env_state, q_state=next_q)
         aug_obs = self._concat(obs, fp, accept)
         return aug_obs, new_state, reward, done, info
@@ -341,79 +347,113 @@ class AutomatonAugmentedEnvWrapper(GymnaxWrapper):
 
 
 # ---------------------------------------------------------------------------
-# Reward shaping wrapper
+# Reward composition wrapper
 # ---------------------------------------------------------------------------
 
 
 @struct.dataclass
-class _ShapingState:
-    """State carry for :class:`AcceptRewardShapingWrapper`.
+class _RewardCompositionState:
+    """State carry for :class:`RewardCompositionWrapper`.
 
     Wraps an inner env's state and tracks the previous step's accept value
-    so the shaping function can detect rising edges or compute deltas.
+    so the configured term function can detect rising edges or compute
+    deltas.
     """
 
     env_state: Any
     prev_accept: Float[Array, ""]
 
 
-def _make_shaping_fn(kind: str, scale: float) -> Callable[..., Float[Array, "..."]]:
-    """Return a 4-arg ``(reward, done, prev_accept, curr_accept) -> shaped_reward`` callable.
+class RewardCompositionWrapper(GymnaxWrapper):
+    r"""Compute reward as a linear combination of env reward and accept term.
 
-    ``dense_accept_prob`` has a 5th ``scale`` argument; we partial-apply it
-    to keep all variants 4-arg from the wrapper's perspective. ``none``
-    and ``sparse_accept`` are already 4-arg with no scale.
-    """
-    from automata_rl.reward_shaping import dense_accept_prob, get_shaping_fn
+    The trainer reward emitted on every step is
 
-    if kind == "dense_accept_prob":
-        return functools.partial(dense_accept_prob, scale=float(scale))
-    return get_shaping_fn(kind)
+    .. math::
 
+        \text{reward} = \text{env\_coef} \cdot \text{env\_reward}
+                        + \text{accept\_coef} \cdot \text{accept\_term},
 
-class AcceptRewardShapingWrapper(GymnaxWrapper):
-    r"""Apply accept-based reward shaping on top of an :class:`AutomatonAugmentedEnvWrapper`.
+    where ``accept_term`` is one of the functions in
+    :mod:`automata_rl.reward_shaping` (selected by ``kind``).
 
-    Reads ``info["embedding/accept"]`` produced by the inner wrapper, carries
-    ``prev_accept`` per env in its own state pytree, and modifies the
-    returned reward via the configured shaping function.
+    Inserted strictly downstream of
+    :class:`AutomatonAugmentedEnvWrapper` so
+    ``info["embedding/accept"]`` is populated, and strictly upstream of
+    :class:`wrappers.LogWrapper` so the combined reward is what
+    ``LogWrapper`` records as the episode return.
 
-    Insert between :class:`AutomatonAugmentedEnvWrapper` and
-    upstream's ``LogWrapper`` so the shaped reward is what
-    :class:`LogWrapper` records as the episode return.
+    Always emits the raw env reward and raw accept term to ``info``
+    under the keys ``"task/env_reward"`` and ``"task/accept_term"``,
+    and overwrites ``info["task/reward"]`` (originally set by
+    :class:`task_env.CraftaxSymbolicTaskEnv` to the env hit signal)
+    with the combined trainer reward so downstream W&B logging shows
+    what PPO actually optimizes.
 
     Args:
-        env: Inner env that emits ``info["embedding/accept"]`` (typically an
-            :class:`AutomatonAugmentedEnvWrapper`).
-        kind: One of ``"sparse_accept"``, ``"dense_accept_prob"``,
-            or ``"none"`` (identity).
-        scale: Multiplier for ``dense_accept_prob`` only; ignored for
-            ``sparse_accept`` / ``none``.
+        env: Inner env that emits ``info["embedding/accept"]`` (typically
+            an :class:`AutomatonAugmentedEnvWrapper`).
+        kind: Key into :data:`automata_rl.reward_shaping.TERM_FNS`.
+            One of ``"none"``, ``"sparse_accept"``, ``"dense_accept_prob"``,
+            ``"continuous"``, ``"continuous_relu"``.
+        accept_coef: Coefficient on the accept term.
+        env_coef: Coefficient on the inner env reward.
     """
 
-    def __init__(self, env: Any, kind: str, scale: float = 1.0) -> None:
+    def __init__(
+        self,
+        env: Any,
+        *,
+        kind: str,
+        accept_coef: float,
+        env_coef: float,
+    ) -> None:
+        from automata_rl.reward_shaping import TERM_FNS
+
         super().__init__(env)
-        self._shaping_fn = _make_shaping_fn(kind, scale)
+        if kind not in TERM_FNS:
+            raise ValueError(
+                f"Unknown accept_reward_kind: {kind!r}; expected one of {list(TERM_FNS)}",
+            )
+        self._term_fn = TERM_FNS[kind]
         self._kind = kind
-        self._scale = float(scale)
+        self._accept_coef = float(accept_coef)
+        self._env_coef = float(env_coef)
 
     @partial(jax.jit, static_argnums=(0, 2))
     def reset(self, key: jax.Array, params: Any = None):
         obs, inner_state = self._env.reset(key, params)
-        return obs, _ShapingState(
+        return obs, _RewardCompositionState(
             env_state=inner_state, prev_accept=jnp.float32(0.0),
         )
 
     @partial(jax.jit, static_argnums=(0, 4))
-    def step(self, key: jax.Array, state: _ShapingState, action: Any, params: Any = None):
-        obs, inner_state, reward, done, info = self._env.step(
+    def step(
+        self,
+        key: jax.Array,
+        state: _RewardCompositionState,
+        action: Any,
+        params: Any = None,
+    ):
+        obs, inner_state, env_reward, done, info = self._env.step(
             key, state.env_state, action, params,
         )
-        accept = info["embedding/accept"]
-        shaped = self._shaping_fn(reward, done, state.prev_accept, accept)
-        # ``AutomatonAugmentedEnvWrapper`` already overwrites
-        # ``info["embedding/accept"]`` with the initial-state accept on
-        # ``done=True``, so a single ``next_prev = accept`` is correct for
-        # both branches.
-        new_state = _ShapingState(env_state=inner_state, prev_accept=accept)
-        return obs, new_state, shaped, done, info
+        # ``info["embedding/accept"]`` is the live pre-reset accept on
+        # every step (post the AutomatonAugmentedEnvWrapper fix). The
+        # outer auto-reset wrapper replaces this whole state on
+        # ``done=True``, so storing ``prev_accept = curr_accept``
+        # unconditionally is fine — the carry is a don't-care across
+        # episode boundaries.
+        curr_accept = info["embedding/accept"]
+        accept_term = self._term_fn(done, state.prev_accept, curr_accept)
+        combined = self._env_coef * env_reward + self._accept_coef * accept_term
+        info = {
+            **info,
+            "task/env_reward": env_reward,
+            "task/accept_term": accept_term,
+            "task/reward": combined,
+        }
+        new_state = _RewardCompositionState(
+            env_state=inner_state, prev_accept=curr_accept,
+        )
+        return obs, new_state, combined, done, info

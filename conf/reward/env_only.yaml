@@ -1,0 +1,4 @@
+# @package _global_
+env_reward_coef: 1.0
+accept_reward_coef: 0.0
+accept_reward_kind: none

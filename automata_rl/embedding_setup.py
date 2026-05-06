@@ -3,7 +3,9 @@ r"""Factory for the embedding wrapper stack used by :file:`ppo.py`.
 Loads on-disk artefacts (Brzozowski Flax params msgpack + config yaml +
 eval_points npy, or RAD lookup npz), builds the corresponding backend,
 constructs a :class:`automata_rl.wrappers.AutomatonAugmentedEnvWrapper`,
-and optionally chains on a :class:`automata_rl.wrappers.AcceptRewardShapingWrapper`.
+and chains on a :class:`automata_rl.wrappers.RewardCompositionWrapper`
+configured by ``ACCEPT_REWARD_KIND``, ``ACCEPT_REWARD_COEF``, and
+``ENV_REWARD_COEF`` from the ``ppo.py`` config.
 
 Public entry point :func:`build_embedding_stack` returns
 ``(wrapped_env, emb_split_idx)`` where ``emb_split_idx`` is the
@@ -31,10 +33,10 @@ from automata_rl.predicate_eval import (
     make_predicate_evaluator,
 )
 from automata_rl.wrappers import (
-    AcceptRewardShapingWrapper,
     AutomatonAugmentedEnvWrapper,
     JaxBrzozowskiBackend,
     RadLookupBackend,
+    RewardCompositionWrapper,
 )
 
 
@@ -107,7 +109,8 @@ def build_embedding_stack(env: Any, config: dict) -> tuple[Any, int]:
         config: ppo.py's flat config dict. Reads ``EMBEDDING_KIND``,
             ``TARGET_ACHIEVEMENT``, ``BRZOZOWSKI_*_PATH`` /
             ``RAD_LOOKUP_PATH``, ``TASK_PREDICATES_PATH``,
-            ``REWARD_SHAPING``, ``REWARD_SHAPING_SCALE``.
+            ``ACCEPT_REWARD_KIND``, ``ACCEPT_REWARD_COEF``,
+            ``ENV_REWARD_COEF``.
 
     Returns:
         ``(wrapped_env, emb_split_idx)``. ``emb_split_idx`` is the inner
@@ -153,24 +156,19 @@ def build_embedding_stack(env: Any, config: dict) -> tuple[Any, int]:
         env, backend, pred_eval, augment_accept=True,
     )
 
-    shaping = config.get("REWARD_SHAPING", "none")
-    if shaping not in ("none", "sparse_accept", "dense_accept_prob"):
+    accept_reward_kind = config.get("ACCEPT_REWARD_KIND", "continuous")
+    if accept_reward_kind == "dense_accept_prob" and kind == "rad_lookup":
+        # RAD's accept is binary; dense_accept_prob's delta would flicker.
         raise ValueError(
-            f"Unknown REWARD_SHAPING: {shaping!r}; "
-            "expected 'none', 'sparse_accept', or 'dense_accept_prob'."
-        )
-    if shaping == "dense_accept_prob" and kind == "rad_lookup":
-        # RAD's accept is binary; dense_accept_prob would flicker.
-        raise ValueError(
-            "REWARD_SHAPING='dense_accept_prob' is incompatible with "
+            "ACCEPT_REWARD_KIND='dense_accept_prob' is incompatible with "
             "EMBEDDING_KIND='rad_lookup' (RAD accept is binary 0/1)."
         )
-    if shaping != "none":
-        env = AcceptRewardShapingWrapper(
-            env,
-            kind=shaping,
-            scale=float(config.get("REWARD_SHAPING_SCALE", 1.0)),
-        )
+    env = RewardCompositionWrapper(
+        env,
+        kind=accept_reward_kind,
+        accept_coef=float(config.get("ACCEPT_REWARD_COEF", 1.0)),
+        env_coef=float(config.get("ENV_REWARD_COEF", 0.0)),
+    )
 
     return env, inner_obs_dim
 

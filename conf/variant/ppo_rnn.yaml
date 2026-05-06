@@ -1,0 +1,5 @@
+# @package _global_
+variant_name: ppo_rnn
+run_target: ppo_rnn.run_ppo
+# ppo_rnn.make_train reads neither ICM/E3B/RND fields nor
+# exploration_update_epochs, so this variant deliberately omits them.

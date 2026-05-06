@@ -1,0 +1,46 @@
+# Hydra config for craftax_baselines.
+#
+# Single-run usage:
+#   python train.py variant=ppo embedding=brzozowski reward=accept_sparse
+#   python train.py num_envs=256 seed=0
+#
+# Sweep over the canonical experiment matrix (21 runs):
+#   python train.py -m experiment=glob(*) variant=ppo,ppo_rnn,ppo_rnd
+#
+# Per-embedding reward defaults: setting `embedding=brzozowski` (or `rad`)
+# without an `experiment=` automatically flips the default reward bundle
+# via the embedding config's `defaults: - override /reward: ...` block.
+# CLI `reward=...` overrides win over both.
+
+defaults:
+  - reward: env_only
+  - variant: ppo
+  - embedding: none
+  - env: craftax_symbolic
+  - ppo_hyperparameters: default
+  - network: default
+  - logging: default
+  - optional experiment: null
+  - _self_
+
+# Top-level scalars
+seed: null
+debug: true
+jit: true
+num_repeats: 1
+target_achievement: null
+task_terminate_on_complete: false
+task_predicates_path: outputs/task_predicates.json
+
+# ``experiment_name`` is set only by ``experiment/*.yaml`` when an experiment
+# is selected; otherwise the key is absent and ``train.py`` reads it via
+# ``config.get("EXPERIMENT_NAME")`` -> None.
+
+hydra:
+  run:
+    dir: outputs/runs/${variant_name}/${now:%Y%m%d-%H%M%S}
+  sweep:
+    dir: outputs/runs/sweep/${now:%Y%m%d-%H%M%S}
+    subdir: ${hydra.job.num}
+  job:
+    chdir: false

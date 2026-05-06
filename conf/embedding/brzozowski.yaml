@@ -1,0 +1,8 @@
+# @package _global_
+defaults:
+  - override /reward: accept_continuous
+
+embedding_kind: brzozowski_jax
+brzozowski_params_path: outputs/brzozowski_jax_params.msgpack
+brzozowski_config_path: outputs/brzozowski_jax_config.yaml
+brzozowski_eval_points_path: outputs/brzozowski_jax_eval_points.npy

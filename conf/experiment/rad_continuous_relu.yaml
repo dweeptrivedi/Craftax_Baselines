@@ -1,0 +1,6 @@
+# @package _global_
+defaults:
+  - override /embedding: rad
+  - override /reward: accept_continuous_relu
+
+experiment_name: rad_continuous_relu

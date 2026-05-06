@@ -1,0 +1,6 @@
+# @package _global_
+defaults:
+  - override /embedding: brzozowski
+  - override /reward: env_only
+
+experiment_name: brzozowski_env_only

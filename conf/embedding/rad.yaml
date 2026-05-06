@@ -1,0 +1,6 @@
+# @package _global_
+defaults:
+  - override /reward: accept_continuous
+
+embedding_kind: rad_lookup
+rad_lookup_path: outputs/lookup_rad.npz

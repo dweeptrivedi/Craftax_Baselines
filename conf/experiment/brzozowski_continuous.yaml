@@ -1,0 +1,6 @@
+# @package _global_
+defaults:
+  - override /embedding: brzozowski
+  - override /reward: accept_continuous
+
+experiment_name: brzozowski_continuous
