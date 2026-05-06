@@ -1,0 +1,5 @@
+# @package _global_
+env_name: Craftax-Symbolic-v1
+num_envs: 1024
+use_optimistic_resets: true
+optimistic_reset_ratio: 16
